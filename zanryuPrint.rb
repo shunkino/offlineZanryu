@@ -17,22 +17,19 @@ def getStudentNo
 	}
 end
 
-def chohuku(file, stNumber)
-	file.each {|line|
-		if line.chomp == stNumber.chomp 
-			puts "重複した番号です"
-			return true	
-		end
-	}
-	return false
-end
 
+studentIDs = {}
 puts "Automatic Zanryu Paper Printer."
+f = open("participation.txt", "a+") 
 loop do
-	f = open("participation.txt", "a+") 
-	studentId = getStudentNo
-	if !chohuku(f, studentId)
-		f.puts studentId 
+	studentID = getStudentNo().chomp
+	if defined? studentIDs[studentID] 
+		puts "重複です。" 
+	else
+		puts studentID
+		studentIDs[studentID] = true	
 	end
-	f.close
+
 end
+f.puts studentId 
+f.close
