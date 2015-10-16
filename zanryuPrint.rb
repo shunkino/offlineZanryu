@@ -1,5 +1,7 @@
 require "pasori"
 require 'rubygems'
+require 'clockwork'
+include Clockwork
 require 'sqlite3'
 include SQLite3
 
@@ -47,6 +49,7 @@ def insertStudentNum(db, studentID)
 	date = Date.today
 	insertSql = "INSERT INTO overnightPeople (studentID, stayDate) VALUES (#{studentID.to_s}, '#{date}');"
 	db.execute(insertSql)
+	puts "SUCCESS!"
 	puts insertSql
 end
 
@@ -54,6 +57,7 @@ studentIDs = {}
 puts "Automatic Zanryu Paper Printer."
 Pasori.open {|pasori|
 	loop do
+		# 時間を判定する
 		print "Press Enter to read next card."
 		gets
 		studentID = getStudentNo(pasori).chomp
@@ -63,7 +67,7 @@ Pasori.open {|pasori|
 			insertStudentNum(db, studentID)
 		else
 			# 重複していた場合
-			puts studentIDs[studentID]
+			puts "You have already registered." 
 		end
 	end	
 }
