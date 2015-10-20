@@ -38,7 +38,7 @@ end
 def insertStudentNum(db, studentID)
 	db = Database.new("zanryu.db")
 	date = Date.today
-	insertSql = "INSERT INTO overnightPeople (studentID, stayDate) VALUES (#{studentID.to_s}, '#{date}');"
+	insertSql = "INSERT INTO overnightPeople (studentID, stayDate) VALUES (#{studentID.to_s}, '#{date.to_s}');"
 	db.execute(insertSql)
 	puts "SUCCESS!"
 	puts insertSql

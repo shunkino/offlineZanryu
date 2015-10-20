@@ -110,6 +110,8 @@ class PostInfo < WEBrick::HTTPServlet::AbstractServlet
 				res.body += "データの登録に失敗しました。登録済みで無いか確認して時間がたってから再トライしてください。\n"
 				res.body += $!.to_s 
 			end
+		else
+			res.body = "学籍番号を確認してやり直してください。"
 		end
 	end
 end
@@ -136,12 +138,28 @@ class UpdateInfo < WEBrick::HTTPServlet::AbstractServlet
 				res.body += "データの登録に失敗しました。登録済みで無いか確認して時間がたってから再トライしてください。\n"
 				res.body += $!.to_s 
 			end
+		else
+			res.body = "学籍番号を確認してやり直してください。"
+		end
+	end
+end
+
+class ZanryuTouroku< WEBrick::HTTPServlet::AbstractServlet
+	def do_POST(req, res)
+		today = Date.today.to_s
+		db = Database.new("zanryu.db")
+		userQuery = req.query
+		if studentNumberValidation(userQuery["studentID"])
+			db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :stayDate)", userQuery["studentID"], today) 
+		else
+			res.body = "学籍番号を確認してやり直してください。"
 		end
 	end
 end
 
 s.mount('/register', PostInfo)
 s.mount('/update', UpdateInfo)
+s.mount('/offer', ZanryuTouroku)
 
 trap("INT") {
 	s.shutdown

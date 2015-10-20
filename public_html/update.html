@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>オフライン残留届け情報登録ページ</title>
+		<link rel="stylesheet" href="./style.css" type="text/css" charset="utf-8">
+	</head>
+	<body>
+		<h1>オフライン残留届け情報登録ページ</h1>
+		<h3>下記のフォームを埋めて送信してください</h3>
+		<form action="./update" method="post">
+			<table>
+				<tr>
+					<td>学籍番号:</td>
+					<td><input id="studentID" type="text" name="studentID"></td>
+				</tr>
+				<tr>
+					<td>学部:</td>
+					<td><input id="faculty" type="text" name="faculty"></td>
+				</tr>
+				<tr>
+					<td>学年:</td>
+					<td>
+						<select name="year" id="year" size="1">
+							<option value="学部1年">学部1年</option>
+							<option value="学部2年">学部2年</option>
+							<option value="学部3年">学部3年</option>
+							<option value="学部4年">学部4年</option>
+							<option value="修士1年">修士1年</option>
+							<option value="修士2年">修士2年</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>氏名:</td>
+					<td><input id="name" type="text" name="name"></td>
+				</tr>
+				<tr>
+					<td>授業名:</td>
+					<td><input id="course" type="text" name="course"></td>
+				</tr>
+				<tr>
+					<td>指導教官名:</td>
+					<td><input id="facultyMember" type="text" name="facultyMember"></td>
+				</tr>
+				<tr>
+					<td>残留場所:</td>
+					<td><input id="place" type="text" name="place"></td>
+				</tr>
+				<tr>
+					<td>緊急時連絡先(氏名):</td>
+					<td><input id="emergencyName" type="text" name="emergencyName"></td>
+				</tr>
+				<tr>
+					<td>緊急時連絡先(関係):</td>
+					<td><input id="emergencyRelation" type="text" name="emergencyRelation"></td>
+				</tr>
+				<tr>
+					<td>緊急時連絡先(電話番号):</td>
+					<td><input id="emergencyPhone" type="text" name="emergencyPhone"></td>
+				</tr>
+				<tr>
+					<td>	
+						<input id="submitBtn" type="submit"> 
+					</td>
+				</tr>
+			</table>
+		</form>
+		<br />
+		<a href="./index.html" >新規登録|</a>
+		<a href="./offer.html" >残留申請</a>
+	</body>
+</html>
