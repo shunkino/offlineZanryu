@@ -5,32 +5,22 @@ include Clockwork
 require 'sqlite3'
 include SQLite3
 
-# SQL接続
-db = Database.new("zanryu.db")
-peopleSql =<<SQL
+def init 
+	createDB
+end
+
+def createDB
+	# SQL接続
+	db = Database.new("zanryu.db")
+	peopleSql =<<SQL
 CREATE TABLE IF NOT EXISTS overnightPeople(
 studentID int NOT NULL,
 stayDate text 
 );
 SQL
-
-infoSql =<<INFOSQL
-CREATE TABLE IF NOT EXISTS information(
-studentID int NOT NULL,
-fuculty text,
-year text,
-name text,
-course text,
-facultyMember text,
-place text,
-emergencyName text,
-emergencyRelation text,
-emergencyPhone text
-);
-INFOSQL
-
-db.execute(peopleSql)
-db.execute(infoSql)
+	db.execute(peopleSql)
+	db.close
+end
 
 def getStudentNo(pasori)
 	begin
@@ -46,13 +36,17 @@ def getStudentNo(pasori)
 end
 
 def insertStudentNum(db, studentID)
+	db = Database.new("zanryu.db")
 	date = Date.today
 	insertSql = "INSERT INTO overnightPeople (studentID, stayDate) VALUES (#{studentID.to_s}, '#{date}');"
 	db.execute(insertSql)
 	puts "SUCCESS!"
 	puts insertSql
+	db.colose
 end
 
+# 初期化処理
+init
 studentIDs = {}
 puts "Automatic Zanryu Paper Printer."
 Pasori.open {|pasori|
@@ -70,4 +64,8 @@ Pasori.open {|pasori|
 			puts "You have already registered." 
 		end
 	end	
+}
+
+Signal.trap(:INT) {|signo|
+	# 終了時の処理
 }

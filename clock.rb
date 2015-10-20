@@ -13,4 +13,3 @@ module Clockwork
 
 	every(2.seconds, ClockJob.new)
 end
-
