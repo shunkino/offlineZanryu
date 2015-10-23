@@ -35,37 +35,44 @@ def getStudentNo(pasori)
 	end
 end
 
-def insertStudentNum(db, studentID)
+def isAlreadyInDB (studentID, date, db)
+	response = db.execute("SELECT * FROM overnightPeople WHERE studentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
+	if response.empty?
+		return false
+	else
+		return true
+	end
+end
+
+def insertStudentNum(studentID)
 	db = Database.new("zanryu.db")
+	# 日にちを取得("YYYY-MM-DD")
 	date = Date.today
-	insertSql = "INSERT INTO overnightPeople (studentID, stayDate) VALUES (#{studentID.to_s}, '#{date.to_s}');"
-	db.execute(insertSql)
-	puts "SUCCESS!"
-	puts insertSql
-	db.colose
+	unless isAlreadyInDB(studentID, date, db)
+		# 重複がなかった場合
+		puts "Data doesn't exists"
+		db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :date);", studentID.to_s, date.to_s)
+		puts "SUCCESS!"
+	else
+		# 重複があった場合
+		puts "You have already registered today." 
+	end
+	db.close
 end
 
 # 初期化処理
 init
-studentIDs = {}
 puts "Automatic Zanryu Paper Printer."
 Pasori.open {|pasori|
 	loop do
-		# 時間を判定する
 		print "Press Enter to read next card."
 		gets
 		studentID = getStudentNo(pasori).chomp
-		unless studentIDs[studentID]
-			# 未登録だった時
-			studentIDs[studentID] = true	
-			insertStudentNum(db, studentID)
-		else
-			# 重複していた場合
-			puts "You have already registered." 
-		end
+		insertStudentNum(studentID)
 	end	
 }
 
 Signal.trap(:INT) {|signo|
 	# 終了時の処理
+	db.close
 }

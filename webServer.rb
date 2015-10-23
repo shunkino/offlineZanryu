@@ -74,6 +74,15 @@ def makePreparedQuery(userQuery, mode)
 	return queryStr
 end
 
+def isAlreadyInDB (studentID, date, db)
+	response = db.execute("SELECT * FROM overnightPeople WHERE studentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
+	if response.empty?
+		return false
+	else
+		return true
+	end
+end
+
 def studentNumberValidation(studentID)
 	if /^([0-9]{8})/ =~ studentID
 		return true
@@ -150,7 +159,14 @@ class ZanryuTouroku< WEBrick::HTTPServlet::AbstractServlet
 		db = Database.new("zanryu.db")
 		userQuery = req.query
 		if studentNumberValidation(userQuery["studentID"])
-			db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :stayDate)", userQuery["studentID"], today) 
+			unless isAlreadyInDB(userQuery["studentID"], today, db)
+				# 重複がなかった場合
+				db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :date);", userQuery["studentID"], today)
+				res.body = "登録完了しました。"
+			else
+				# 重複があった場合
+				puts "You have already registered today." 
+			end
 		else
 			res.body = "学籍番号を確認してやり直してください。"
 		end
