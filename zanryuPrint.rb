@@ -4,6 +4,7 @@ require 'clockwork'
 include Clockwork
 require 'sqlite3'
 include SQLite3
+# -*- encoding: UTF-8 -*-
 
 def init 
 	createDB
@@ -14,7 +15,8 @@ def createDB
 	db = Database.new("zanryu.db")
 	peopleSql =<<SQL
 CREATE TABLE IF NOT EXISTS overnightPeople(
-studentID int NOT NULL,
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+zanryuStudentID int NOT NULL,
 stayDate text 
 );
 SQL
@@ -36,7 +38,7 @@ def getStudentNo(pasori)
 end
 
 def isAlreadyInDB (studentID, date, db)
-	response = db.execute("SELECT * FROM overnightPeople WHERE studentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
+	response = db.execute("SELECT * FROM overnightPeople WHERE zanryuStudentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
 	if response.empty?
 		return false
 	else
@@ -51,7 +53,7 @@ def insertStudentNum(studentID)
 	unless isAlreadyInDB(studentID, date, db)
 		# 重複がなかった場合
 		puts "Data doesn't exists"
-		db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :date);", studentID.to_s, date.to_s)
+		db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", studentID.to_s, date.to_s)
 		puts "SUCCESS!"
 	else
 		# 重複があった場合

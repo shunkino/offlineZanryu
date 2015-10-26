@@ -3,12 +3,13 @@ include WEBrick
 require 'sqlite3'
 include SQLite3
 
+# -*- encoding: UTF-8 -*-
 
 db = Database.new("zanryu.db")
 # db接続
 infoSql =<<INFOSQL
 CREATE TABLE IF NOT EXISTS information(
-studentID INTEGER NOT NULL, 
+studentID INTEGER PRIMARY KEY, 
 faculty text,
 year text,
 name text,
@@ -75,7 +76,7 @@ def makePreparedQuery(userQuery, mode)
 end
 
 def isAlreadyInDB (studentID, date, db)
-	response = db.execute("SELECT * FROM overnightPeople WHERE studentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
+	response = db.execute("SELECT * FROM overnightPeople WHERE zanryuStudentId=:studentID AND stayDate=:date", studentID.to_s, date.to_s)
 	if response.empty?
 		return false
 	else
@@ -161,7 +162,7 @@ class ZanryuTouroku< WEBrick::HTTPServlet::AbstractServlet
 		if studentNumberValidation(userQuery["studentID"])
 			unless isAlreadyInDB(userQuery["studentID"], today, db)
 				# 重複がなかった場合
-				db.execute("INSERT INTO overnightPeople (studentID, stayDate) VALUES (:studentID, :date);", userQuery["studentID"], today)
+				db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", userQuery["studentID"], today)
 				res.body = "登録完了しました。"
 			else
 				# 重複があった場合

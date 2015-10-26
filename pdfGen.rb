@@ -7,9 +7,12 @@ report = Thinreports::Report.new layout:'Overnight_Study'
 db = Database.new("zanryu.db")
 db.results_as_hash = true
 
-dateConverter = {"Monday" => "月", "Tuesday" => "火", "Wednesday" => "水", "Thursday" => "木", "Friday" => "金", "Saturday" => "土曜日", "Sunday" => "日"}
+dateConverter = {"Monday" => "月", "Tuesday" => "火", "Wednesday" => "水", "Thursday" => "木", "Friday" => "金", "Saturday" => "土", "Sunday" => "日"}
 
-infos = db.execute("SELECT * FROM information INNER JOIN overnightPeople ON overnightPeople.studentID=information.studentID WHERE stayDate=:dateToday ", :dateToday => todayDate.to_s)
+#infos = db.execute("SELECT * FROM information INNER JOIN overnightPeople ON overnightPeople.studentID=information.studentID WHERE stayDate=:dateToday ", :dateToday => todayDate.to_s)
+infos = db.execute("SELECT * FROM information INNER JOIN overnightPeople ON overnightPeople.zanryuStudentID=information.studentID WHERE stayDate=:dateToday ", :dateToday => todayDate.to_s)
+
+puts infos
 
 infos.each_slice(4) do |information|
 	report.start_new_page do |page|
