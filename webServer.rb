@@ -1,9 +1,8 @@
+# -*- encoding: UTF-8 -*-
 require 'webrick'
 include WEBrick
 require 'sqlite3'
 include SQLite3
-
-# -*- encoding: UTF-8 -*-
 
 db = Database.new("zanryu.db")
 # db接続
