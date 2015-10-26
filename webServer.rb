@@ -167,6 +167,7 @@ class ZanryuTouroku< WEBrick::HTTPServlet::AbstractServlet
 			else
 				# 重複があった場合
 				puts "You have already registered today." 
+				res.body = "既に登録済みです。"
 			end
 		else
 			res.body = "学籍番号を確認してやり直してください。"

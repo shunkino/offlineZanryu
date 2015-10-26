@@ -1,10 +1,10 @@
+# -*- encoding: UTF-8 -*-
 require "pasori"
 require 'rubygems'
 require 'clockwork'
 include Clockwork
 require 'sqlite3'
 include SQLite3
-# -*- encoding: UTF-8 -*-
 
 def init 
 	createDB
