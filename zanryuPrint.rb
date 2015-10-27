@@ -16,7 +16,7 @@ def createDB
 	peopleSql =<<SQL
 CREATE TABLE IF NOT EXISTS overnightPeople(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-zanryuStudentID int NOT NULL,
+zanryuStudentID INTEGER NOT NULL,
 stayDate text 
 );
 SQL
@@ -53,7 +53,7 @@ def insertStudentNum(studentID)
 	unless isAlreadyInDB(studentID, date, db)
 		# 重複がなかった場合
 		puts "Data doesn't exists"
-		db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", studentID.to_s, date.to_s)
+		db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", studentID, date.to_s)
 		puts "SUCCESS!"
 	else
 		# 重複があった場合
@@ -69,7 +69,7 @@ Pasori.open {|pasori|
 	loop do
 		print "Press Enter to read next card."
 		gets
-		studentID = getStudentNo(pasori).chomp
+		studentID = getStudentNo(pasori).chomp.encode('ascii-8bit')
 		insertStudentNum(studentID)
 	end	
 }
