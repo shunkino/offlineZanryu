@@ -5,11 +5,25 @@ require 'clockwork'
 include Clockwork
 require 'sqlite3'
 include SQLite3
+require 'open3'
 
 def init 
 	createDB
 end
+def failSound
+	out, err, status = Open3.capture3("say しっぱいしたよ")
+	puts out
+	puts err
+	puts status
+end
 
+
+def successSound
+	out, err, status = Open3.capture3("say さくせす")
+	puts out
+	puts err
+	puts status
+end
 def createDB
 	# SQL接続
 	db = Database.new("zanryu.db")
@@ -55,8 +69,10 @@ def insertStudentNum(studentID)
 		puts "Data doesn't exists"
 		db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", studentID, date.to_s)
 		puts "SUCCESS!"
+		successSound
 	else
 		# 重複があった場合
+		failSound()
 		puts "You have already registered today." 
 	end
 	db.close
@@ -69,7 +85,7 @@ Pasori.open {|pasori|
 	loop do
 		print "Press Enter to read next card."
 		gets
-		studentID = getStudentNo(pasori).chomp.encode('ascii-8bit')
+		studentID = getStudentNo(pasori).chomp.encode('utf-8')
 		insertStudentNum(studentID)
 	end	
 }
