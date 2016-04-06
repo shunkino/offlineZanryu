@@ -91,9 +91,11 @@ def studentNumberValidation(studentID)
 	end
 end
 
+# logger = Log.new("./webServerLog", BasicLog::DEBUG)
 s = HTTPServer.new(
-	:Port => 3000,
-	:DocumentRoot => File.join(Dir::pwd, "public_html")
+	:Port => 3080,
+	:DocumentRoot => File.join(Dir::pwd, "public_html"),
+	# :Logger => logger
 )
 
 class PostInfo < WEBrick::HTTPServlet::AbstractServlet
@@ -112,6 +114,7 @@ class PostInfo < WEBrick::HTTPServlet::AbstractServlet
 					sth.bind_param("#{key}", value) 
 				end
 			}
+			res.content_type = "text/html; charset=utf8"
 			begin
 				sth.execute
 				res.body += "データの登録に成功しました。\n"
@@ -140,6 +143,7 @@ class UpdateInfo < WEBrick::HTTPServlet::AbstractServlet
 					sth.bind_param("#{key}", value) 
 				end
 			}
+			res.content_type = "text/html; charset=utf8"
 			begin
 				sth.execute
 				res.body += "データの更新に成功しました。\n"
@@ -158,10 +162,11 @@ class ZanryuTouroku< WEBrick::HTTPServlet::AbstractServlet
 		today = Date.today.to_s
 		db = Database.new("zanryu.db")
 		userQuery = req.query
+		res.content_type = "text/html; charset=utf8"
 		if studentNumberValidation(userQuery["studentID"])
-			unless isAlreadyInDB(userQuery["studentID"], today, db)
+			unless isAlreadyInDB(userQuery["studentID"].chomp.encode('utf-8'), today, db)
 				# 重複がなかった場合
-				db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", userQuery["studentID"], today)
+				db.execute("INSERT INTO overnightPeople (zanryuStudentID, stayDate) VALUES (:studentID, :date);", userQuery["studentID"].chomp.encode('utf-8'), today)
 				res.body = "登録完了しました。"
 			else
 				# 重複があった場合

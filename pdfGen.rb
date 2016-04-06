@@ -37,7 +37,7 @@ unless infos.empty?
 	end
 
 	report.generate(filename: "overnight-#{todayDate.to_s}.pdf")
-	puts "Done!"
+	puts "Done!#{todayDate.to_s}"
 else
 	puts "Nobody Zanryu today."
 end

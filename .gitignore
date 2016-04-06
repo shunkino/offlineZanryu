@@ -4,3 +4,5 @@
 *.db
 participation.txt
 test*
+libpafe-0.0.8/
+libpafe-ruby/

@@ -6,12 +6,15 @@ include Clockwork
 require 'sqlite3'
 include SQLite3
 require 'open3'
+require 'timeout'
+
+class ReadTimeout < Exception;end
 
 def init 
 	createDB
 end
 def failSound
-	out, err, status = Open3.capture3("say しっぱいしたよ")
+	out, err, status = Open3.capture3('espeak "Failed"')
 	puts out
 	puts err
 	puts status
@@ -19,7 +22,7 @@ end
 
 
 def successSound
-	out, err, status = Open3.capture3("say さくせす")
+	out, err, status = Open3.capture3('espeak "success"')
 	puts out
 	puts err
 	puts status
@@ -40,15 +43,23 @@ end
 
 def getStudentNo(pasori)
 	begin
-		pasori.felica_polling(-31279) {|felica|
-			felica_area = felica.service[9]
-			stNo = felica.read(felica_area, 1, 0)[0..7]
-			return stNo 
-		}
+		sleep(2)
+		timeout(5, ReadTimeout) do
+			pasori.felica_polling(-31279) {|felica|
+				felica_area = felica.service[9]
+				stNo = felica.read(felica_area, 1, 0)[0..7]
+				return stNo 
+			}
+		end
+	# 読めるカードがなかった場合はこっちのエラー
 	rescue 
 		puts "Cannot read student ID card."
 		retry
+	rescue ReadTimeout 
+		puts "ReadTimeout"
+		retry 
 	end
+
 end
 
 def isAlreadyInDB (studentID, date, db)
@@ -83,10 +94,9 @@ init
 puts "Automatic Zanryu Paper Printer."
 Pasori.open {|pasori|
 	loop do
-		print "Press Enter to read next card."
-		gets
-		studentID = getStudentNo(pasori).chomp.encode('utf-8')
-		insertStudentNum(studentID)
+		# print "Press Enter to read next card."
+		@studentID = getStudentNo(pasori).chomp.encode('utf-8')
+		insertStudentNum(@studentID)
 	end	
 }
 
